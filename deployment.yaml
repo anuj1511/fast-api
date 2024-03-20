@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-todo-backend
+  labels:
+    app: fastapi-todo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-todo-backend
+  template:
+    metadata:
+      labels:
+        app: fastapi-todo-backend
+    spec:
+      containers:
+        - name: fastapi-todo-backend
+          image: anujjadhav0215/fastapi-todo-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-todo-backend
+  labels:
+    app: fastapi-todo-backend
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: fastapi-todo-backend
+---
+apiVersion: gateway.kyma-project.io/v1beta1
+kind: APIRule
+metadata:
+  name: fastapi-todo-backend
+spec:
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  host: fastapi-todo-backend 
+  service:
+    name: fastapi-todo-backend
+    port: 8000
+  rules:
+    - path: /.*
+      accessStrategies:
+        - config: {}
+          handler: noop
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE

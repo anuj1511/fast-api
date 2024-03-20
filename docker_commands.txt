@@ -1,0 +1,3 @@
+docker build -t fastapi-todo-backend .
+docker tag fastapi-todo-backend anujjadhav0215/fastapi-todo-backend:latest
+docker push anujjadhav0215/fastapi-todo-backend:latest
